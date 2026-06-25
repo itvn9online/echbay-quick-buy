@@ -1,0 +1,600 @@
+/* Nút Mua ngay */
+.eqb-buy-btn {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 14px 16px;
+  border: 0;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #ff9800, #f57c00);
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.eqb-buy-btn:hover {
+  opacity: 0.95;
+}
+
+.eqb-buy-btn__title {
+  display: block;
+  font-weight: 700;
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+.eqb-buy-btn__sub {
+  display: block;
+  font-size: 13px;
+  margin-top: 4px;
+  text-transform: none;
+  font-weight: normal;
+}
+
+/* Overlay + popup */
+.eqb-hidden {
+  display: none !important;
+}
+
+/* Honeypot — ẩn khỏi người dùng, bot hay điền các input text */
+.eqb-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+body.eqb-modal-open {
+  overflow: hidden;
+}
+
+.eqb-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.eqb-popup-wrap {
+  position: relative;
+  width: min(920px, 100%);
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.eqb-popup-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 48px 24px;
+}
+
+.eqb-spinner {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #ddd;
+  border-top-color: var(--primary-color, #2e7d32);
+  border-radius: 50%;
+  animation: eqb-spin 0.7s linear infinite;
+}
+
+@keyframes eqb-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.eqb-popup__header,
+.eqb-popup-wrap .eqb-popup__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--primary-color, #2e7d32);
+  color: #fff;
+  border: 0;
+  margin: 0;
+}
+
+.eqb-popup__title,
+.eqb-popup-wrap .eqb-popup__header .eqb-popup__title,
+.eqb-popup-wrap .eqb-popup__header h2 {
+  margin: 0;
+  padding: 0 8px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  line-height: 1.35;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: #fff !important;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+.eqb-popup__close,
+.eqb-popup-wrap .eqb-popup__close,
+.eqb-popup-wrap button.eqb-popup__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff !important;
+  font-size: 22px;
+  font-weight: 400;
+  font-family: inherit;
+  line-height: 1;
+  letter-spacing: 0;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: none;
+  text-shadow: none;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: background 0.15s ease;
+}
+
+.eqb-popup__close:hover,
+.eqb-popup-wrap .eqb-popup__close:hover {
+  background: rgba(255, 255, 255, 0.35);
+  color: #fff !important;
+}
+
+.eqb-popup__body {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 20px;
+  padding: 16px;
+}
+
+@media (max-width: 767px) {
+  .eqb-popup__body {
+    grid-template-columns: 1fr;
+  }
+}
+
+.eqb-popup__image img {
+  max-width: 168px;
+  max-height: 168px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.eqb-popup__product-name {
+  margin: 12px 0 8px;
+  font-size: 16px;
+}
+
+.eqb-popup__price {
+  font-size: 18px;
+  font-weight: 700;
+  color: #d32f2f;
+  margin-bottom: 12px;
+}
+
+.eqb-popup__notice {
+  margin-top: 12px;
+  /* font-size: 12px; */
+  /* color: #666; */
+  /* line-height: 1.5; */
+}
+
+/* Số lượng */
+.eqb-qty-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.eqb-qty__label {
+  flex-shrink: 0;
+  padding-right: 8px;
+  font-size: 13px;
+  white-space: nowrap;
+  font-weight: bold;
+}
+
+.eqb-qty-row .eqb-qty {
+  margin: 0;
+}
+
+.eqb-qty,
+.eqb-popup-wrap .eqb-qty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  vertical-align: middle;
+  height: 34px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.eqb-popup__col--product > .eqb-qty-row,
+.eqb-popup-wrap .eqb-popup__col--product > .eqb-qty-row {
+  width: 100%;
+}
+
+.eqb-popup__col--product > .eqb-qty,
+.eqb-popup-wrap .eqb-popup__col--product > .eqb-qty {
+  display: flex !important;
+  width: fit-content;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.eqb-qty__btn,
+.eqb-popup-wrap .eqb-qty__btn,
+.eqb-popup-wrap button.eqb-qty__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  min-height: 0 !important;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: #f5f5f5 !important;
+  color: #333 !important;
+  font-size: 18px;
+  font-weight: 400;
+  font-family: inherit;
+  line-height: 1 !important;
+  letter-spacing: 0;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: none !important;
+  text-shadow: none;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: background 0.15s ease;
+}
+
+.eqb-qty__btn:hover,
+.eqb-popup-wrap .eqb-qty__btn:hover {
+  background: #e8e8e8 !important;
+  color: #333 !important;
+}
+
+.eqb-qty__input,
+.eqb-popup-wrap .eqb-qty__input,
+.eqb-popup-wrap input.eqb-qty__input {
+  width: 44px;
+  height: 34px;
+  min-height: 0 !important;
+  border: 0;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  border-radius: 0;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 34px;
+  padding: 0;
+  box-sizing: border-box;
+  margin: 0 !important;
+  background: #fff !important;
+  color: #333;
+  box-shadow: none !important;
+  -moz-appearance: textfield;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.eqb-qty__input::-webkit-outer-spin-button,
+.eqb-qty__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Form */
+.eqb-form__heading {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+
+.eqb-form {
+  display: grid;
+  gap: 8px;
+}
+
+.eqb-field {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.eqb-field__label {
+  display: block;
+  margin: 0 0 2px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.eqb-field__label abbr {
+  color: #d32f2f;
+  text-decoration: none;
+}
+
+.eqb-field__input,
+.eqb-popup-wrap input.eqb-field__input,
+.eqb-popup-wrap select.eqb-field__input,
+.eqb-popup-wrap textarea.eqb-field__input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 6px 10px;
+  min-height: 0;
+  height: 34px;
+  line-height: 1.4;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.eqb-popup-wrap .eqb-field__input::placeholder,
+.eqb-popup-wrap .eqb-field__textarea::placeholder {
+  color: #888;
+  opacity: 1;
+}
+
+.eqb-popup-wrap select.eqb-field__input {
+  padding-right: 28px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 10px;
+  cursor: pointer;
+}
+
+.eqb-field__textarea,
+.eqb-popup-wrap textarea.eqb-field__textarea {
+  height: auto;
+  min-height: 56px;
+  padding: 6px 10px;
+  resize: vertical;
+}
+
+.eqb-form__total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  margin: 0;
+  border-top: 1px solid #eee;
+  font-size: 14px;
+}
+
+.eqb-form__message {
+  padding: 10px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.eqb-form__message--success {
+  background: #e8f5e9;
+  color: var(--primary-color, #2e7d32);
+}
+
+.eqb-form__message--error {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.eqb-form__submit {
+  width: 100%;
+  padding: 11px 14px;
+  margin: 0;
+  min-height: 0;
+  border: 0;
+  border-radius: 4px;
+  background: var(--primary-color, #2e7d32);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  line-height: 1.3;
+  opacity: 0.8;
+}
+
+.eqb-form__submit--ready {
+  opacity: 1;
+}
+
+.eqb-form__submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.eqb-form__consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #444;
+  cursor: pointer;
+}
+
+.eqb-form__consent input {
+  margin: 2px 0 0;
+  flex-shrink: 0;
+}
+
+.eqb-form__consent span {
+  font-weight: normal;
+}
+
+.eqb-form__consent a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.eqb-form__consent--error {
+  color: #c62828;
+}
+
+.eqb-form__submit:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--primary-color, #2e7d32) 88%, #000);
+}
+
+.eqb-form__done-close {
+  width: 100%;
+  padding: 11px 14px;
+  margin: 0;
+  min-height: 0;
+  border: 1px solid var(--primary-color, #2e7d32);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--primary-color, #2e7d32);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.3;
+}
+
+.eqb-form__done-close:hover {
+  background: color-mix(in srgb, var(--primary-color, #2e7d32) 8%, #fff);
+}
+
+.eqb-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 0;
+}
+
+.eqb-field-row--3 {
+  grid-template-columns: 1fr 2fr;
+}
+
+@media (max-width: 600px) {
+
+  .eqb-field-row,
+  .eqb-field-row--3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.eqb-field--payment {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.eqb-field--payment .eqb-field__label {
+  margin-bottom: 4px;
+}
+
+.eqb-payment-option {
+  display: block;
+  margin: 5px 0;
+  /* font-size: 13px; */
+  font-weight: normal;
+  /* line-height: 1.4; */
+}
+
+.eqb-payment-option input[type="radio"] {
+  margin: 0 6px 0 0;
+  vertical-align: middle;
+  width: auto;
+  height: auto;
+  min-height: 0;
+}
+
+.eqb-variations-label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.eqb-variations {
+  margin-bottom: 12px;
+}
+
+.eqb-variations__table {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.eqb-variations__table .label {
+  padding-right: 8px;
+  vertical-align: top;
+  font-size: 13px;
+}
+
+.eqb-variations__table select {
+  width: 100%;
+  max-width: 100%;
+  height: 34px;
+  min-height: 0;
+  padding: 6px 10px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  box-shadow: none;
+}
+
+/* Ghi đè CSS theme (Flatsome, WooCommerce) trong popup */
+.eqb-popup-wrap label {
+  margin-bottom: 0;
+}
+
+.eqb-popup-wrap input:not([type="radio"]):not([type="checkbox"]),
+.eqb-popup-wrap select,
+.eqb-popup-wrap textarea {
+  margin-bottom: 0 !important;
+  min-height: 0 !important;
+}
+
+.eqb-popup-wrap .eqb-qty button {
+  margin: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  box-shadow: none !important;
+}

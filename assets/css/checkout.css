@@ -1,0 +1,45 @@
+.eqb-checkout-hidden,
+.woocommerce-checkout #billing_country_field,
+.woocommerce-checkout #shipping_country_field {
+	display: none !important;
+}
+
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper .form-row,
+.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper .form-row {
+	margin-bottom: 12px;
+}
+
+.woocommerce-checkout .eqb-checkout-province select,
+.woocommerce-checkout .eqb-checkout-ward select {
+	width: 100%;
+	min-height: 42px;
+}
+
+.woocommerce-checkout .eqb-checkout-phone,
+.woocommerce-checkout .eqb-checkout-email,
+.woocommerce-checkout .eqb-checkout-province,
+.woocommerce-checkout .eqb-checkout-ward {
+	clear: none;
+}
+
+@media (min-width: 768px) {
+	.woocommerce-checkout .eqb-checkout-phone,
+	.woocommerce-checkout .eqb-checkout-province {
+		float: left;
+		width: 48%;
+		margin-right: 4%;
+	}
+
+	.woocommerce-checkout .eqb-checkout-email,
+	.woocommerce-checkout .eqb-checkout-ward {
+		float: right;
+		width: 48%;
+	}
+}
+
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper::after,
+.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper::after {
+	content: '';
+	display: table;
+	clear: both;
+}
