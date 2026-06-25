@@ -4,7 +4,7 @@ Tags: woocommerce, quick buy, mua nhanh, cod
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.1.3
+Stable tag: 1.1.15
 License: GPLv2 or later
 
 Nút Mua ngay trên trang sản phẩm WooCommerce — popup đặt hàng nhanh qua AJAX.
@@ -18,6 +18,9 @@ Phase 2: biến thể, địa chỉ 2 cấp (Tỉnh → Phường/Xã), chọn p
 Upload thư mục vào wp-content/plugins/ và kích hoạt. Cần WooCommerce. Bảng địa chỉ import tự động lúc activate.
 
 == Changelog ==
+
+= 1.1.15 =
+* Cập nhật plugin tự động từ GitHub Releases (itvn9online/echbay-quick-buy).
 
 = 1.1.2 =
 * New update
