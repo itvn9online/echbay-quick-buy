@@ -38,6 +38,7 @@ add_action(
 );
 
 require_once EQB_PATH . 'includes/class-eqb-settings.php';
+require_once EQB_PATH . 'includes/class-eqb-updater.php';
 require_once EQB_PATH . 'includes/class-eqb-install.php';
 require_once EQB_PATH . 'includes/class-eqb-address.php';
 require_once EQB_PATH . 'includes/class-eqb-order.php';
@@ -73,6 +74,7 @@ add_action(
 		EQB_Admin_Order::init();
 
 		if ( is_admin() ) {
+			EQB_Updater::init();
 			add_action( 'admin_init', array( 'EQB_Install', 'admin_check' ) );
 		}
 	}
