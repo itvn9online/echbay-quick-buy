@@ -41,6 +41,8 @@ class EQB_Settings {
 			'error_message'     => 'Đặt hàng thất bại, vui lòng thử lại.',
 			'redirect_thankyou' => '1',
 			'checkout_vn_form'  => '1',
+			'address_optional'  => '1',
+			'email_optional'    => '1',
 			'debug_order_note'  => '0',
 		);
 	}
@@ -60,6 +62,14 @@ class EQB_Settings {
 
 	public static function is_enabled() {
 		return '1' === (string) self::get( 'enable', '1' );
+	}
+
+	public static function is_address_optional() {
+		return '1' === (string) self::get( 'address_optional', '1' );
+	}
+
+	public static function is_email_optional() {
+		return '1' === (string) self::get( 'email_optional', '1' );
 	}
 
 	public static function add_menu() {
@@ -90,7 +100,7 @@ class EQB_Settings {
 
 		$out     = self::get_all();
 		$texts   = array( 'button_title', 'button_subtitle', 'popup_prefix', 'phone_notice', 'success_message', 'error_message' );
-		$checks  = array( 'enable', 'redirect_thankyou', 'checkout_vn_form', 'debug_order_note' );
+		$checks  = array( 'enable', 'redirect_thankyou', 'checkout_vn_form', 'address_optional', 'email_optional', 'debug_order_note' );
 
 		foreach ( $checks as $key ) {
 			$out[ $key ] = ! empty( $input[ $key ] ) ? '1' : '0';

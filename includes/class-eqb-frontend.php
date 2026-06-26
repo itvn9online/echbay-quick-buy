@@ -76,7 +76,9 @@ class EQB_Frontend {
 			array(
 				'ajax_url'   => admin_url( 'admin-ajax.php' ),
 				'nonce'      => wp_create_nonce( 'eqb_quick_buy' ),
-				'debug_note' => '1' === EQB_Settings::get( 'debug_order_note', '0' ) ? '1' : '0',
+				'debug_note'       => '1' === EQB_Settings::get( 'debug_order_note', '0' ) ? '1' : '0',
+				'address_optional' => EQB_Settings::is_address_optional() ? '1' : '0',
+				'email_optional'   => EQB_Settings::is_email_optional() ? '1' : '0',
 				'i18n'       => array(
 					'loading'       => __( 'Đang tải...', 'echbay-quick-buy' ),
 					'loadingWards'  => __( 'Đang tải phường/xã...', 'echbay-quick-buy' ),

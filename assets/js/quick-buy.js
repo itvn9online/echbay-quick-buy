@@ -276,11 +276,23 @@
 
 		var name = $.trim($form.find('[name="name"]').val());
 		var phone = $.trim($form.find('[name="phone"]').val());
+		var address = $.trim($form.find('[name="address"]').val());
 		var maTinh = $form.find('[name="ma_tinh"]').val();
 		var maXa = $form.find('[name="ma_xa"]').val();
 		var variationId = parseInt($form.find('[data-eqb-variation-id]').val(), 10) || 0;
 
 		if (!name || !phone || !maTinh || !maXa) {
+			$msg.removeClass('eqb-hidden').addClass('eqb-form__message--error').text(eqb_vars.i18n.required);
+			return;
+		}
+
+		if (eqb_vars.address_optional !== '1' && !address) {
+			$msg.removeClass('eqb-hidden').addClass('eqb-form__message--error').text(eqb_vars.i18n.required);
+			return;
+		}
+
+		var email = $.trim($form.find('[name="email"]').val());
+		if (eqb_vars.email_optional !== '1' && !email) {
 			$msg.removeClass('eqb-hidden').addClass('eqb-form__message--error').text(eqb_vars.i18n.required);
 			return;
 		}

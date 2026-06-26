@@ -3,7 +3,7 @@
  * Plugin Name:       Echbay Quick Buy
  * Plugin URI:        https://echbay.com/
  * Description:       Nút Mua ngay trên trang sản phẩm WooCommerce — popup đặt hàng nhanh qua AJAX.
- * Version:           1.1.15
+ * Version:           1.1.16
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Dao Quoc Dai
@@ -17,9 +17,9 @@
 defined( 'ABSPATH' ) || exit;
 
 // Phiên bản dùng làm query string (?ver=) khi enqueue CSS/JS — trình duyệt tải lại file sau khi đổi.
-// Khi sửa assets/css/* hoặc assets/js/*: nâng EQB_VERSION và đồng bộ Version ở header plugin (dòng ~6).
+// Khi phát hành: nâng EQB_VERSION, Version ở header (dòng ~6) và version.txt (dùng so sánh update GitHub).
 // define( 'EQB_VERSION', time() ); // bật tạm khi dev để luôn bypass cache.
-define( 'EQB_VERSION', '1.1.15' );
+define( 'EQB_VERSION', '1.1.16' );
 define( 'EQB_PATH', plugin_dir_path( __FILE__ ) );
 define( 'EQB_URL', plugin_dir_url( __FILE__ ) );
 define( 'EQB_BASENAME', plugin_basename( __FILE__ ) );

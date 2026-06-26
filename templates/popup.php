@@ -18,6 +18,8 @@ $terms_url     = '';
 if ($terms_page_id && 'publish' === get_post_status($terms_page_id)) {
 	$terms_url = get_permalink($terms_page_id);
 }
+$address_optional = EQB_Settings::is_address_optional();
+$email_optional   = EQB_Settings::is_email_optional();
 ?>
 <div class="eqb-popup"
 	data-product-id="<?php echo esc_attr((string) $product->get_id()); ?>"
@@ -95,7 +97,11 @@ if ($terms_page_id && 'publish' === get_post_status($terms_page_id)) {
 
 				<div class="eqb-field">
 					<input type="email" name="email" class="eqb-field__input" autocomplete="email"
-						placeholder="<?php esc_attr_e('Địa chỉ email (Không bắt buộc)', 'echbay-quick-buy'); ?>"
+						<?php if ( ! $email_optional ) : ?>required<?php endif; ?>
+						placeholder="<?php echo esc_attr( $email_optional
+							? __( 'Địa chỉ email (Không bắt buộc)', 'echbay-quick-buy' )
+							: __( 'Địa chỉ email *', 'echbay-quick-buy' )
+						); ?>"
 						aria-label="<?php esc_attr_e('Địa chỉ email', 'echbay-quick-buy'); ?>">
 				</div>
 
@@ -121,7 +127,11 @@ if ($terms_page_id && 'publish' === get_post_status($terms_page_id)) {
 
 				<div class="eqb-field">
 					<input type="text" name="address" class="eqb-field__input" autocomplete="street-address"
-						placeholder="<?php esc_attr_e('Số nhà, tên đường (Không bắt buộc)', 'echbay-quick-buy'); ?>"
+						<?php if ( ! $address_optional ) : ?>required<?php endif; ?>
+						placeholder="<?php echo esc_attr( $address_optional
+							? __( 'Số nhà, tên đường (Không bắt buộc)', 'echbay-quick-buy' )
+							: __( 'Số nhà, tên đường *', 'echbay-quick-buy' )
+						); ?>"
 						aria-label="<?php esc_attr_e('Số nhà, tên đường', 'echbay-quick-buy'); ?>">
 				</div>
 

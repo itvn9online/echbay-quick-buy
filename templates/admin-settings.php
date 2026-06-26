@@ -67,6 +67,26 @@ defined( 'ABSPATH' ) || exit;
 				</td>
 			</tr>
 			<tr>
+				<th scope="row"><?php esc_html_e( 'Địa chỉ nhà (số nhà, đường)', 'echbay-quick-buy' ); ?></th>
+				<td>
+					<label>
+						<input type="checkbox" name="<?php echo esc_attr( $key ); ?>[address_optional]" value="1" <?php checked( '1', $options['address_optional'] ); ?>>
+						<?php esc_html_e( 'Không bắt buộc nhập (billing_address_1)', 'echbay-quick-buy' ); ?>
+					</label>
+					<p class="description"><?php esc_html_e( 'Áp dụng cho trang Thanh toán WooCommerce và popup Mua ngay.', 'echbay-quick-buy' ); ?></p>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><?php esc_html_e( 'Email', 'echbay-quick-buy' ); ?></th>
+				<td>
+					<label>
+						<input type="checkbox" name="<?php echo esc_attr( $key ); ?>[email_optional]" value="1" <?php checked( '1', $options['email_optional'] ); ?>>
+						<?php esc_html_e( 'Không bắt buộc nhập (billing_email)', 'echbay-quick-buy' ); ?>
+					</label>
+					<p class="description"><?php esc_html_e( 'Áp dụng cho trang Thanh toán WooCommerce và popup Mua ngay.', 'echbay-quick-buy' ); ?></p>
+				</td>
+			</tr>
+			<tr>
 				<th scope="row"><?php esc_html_e( 'Ghi chú debug đơn hàng', 'echbay-quick-buy' ); ?></th>
 				<td>
 					<label>

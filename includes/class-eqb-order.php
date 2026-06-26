@@ -63,6 +63,10 @@ class EQB_Order {
 			return new WP_Error( 'eqb_phone', __( 'Số điện thoại không hợp lệ.', 'echbay-quick-buy' ) );
 		}
 
+		if ( ! EQB_Settings::is_email_optional() && '' === trim( $email ) ) {
+			return new WP_Error( 'eqb_email', __( 'Vui lòng nhập địa chỉ email.', 'echbay-quick-buy' ) );
+		}
+
 		if ( '' === $ma_tinh || '' === $ma_xa ) {
 			return new WP_Error( 'eqb_address', __( 'Vui lòng chọn Tỉnh/Thành phố và Phường/Xã.', 'echbay-quick-buy' ) );
 		}
@@ -75,6 +79,10 @@ class EQB_Order {
 		$wards = EQB_Address::get_wards( $ma_tinh );
 		if ( ! isset( $wards[ $ma_xa ] ) ) {
 			return new WP_Error( 'eqb_ward', __( 'Phường/Xã không hợp lệ.', 'echbay-quick-buy' ) );
+		}
+
+		if ( ! EQB_Settings::is_address_optional() && '' === trim( $address_street ) ) {
+			return new WP_Error( 'eqb_street', __( 'Vui lòng nhập số nhà, tên đường.', 'echbay-quick-buy' ) );
 		}
 
 		$product = wc_get_product( $product_id );

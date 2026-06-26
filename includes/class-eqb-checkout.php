@@ -8,11 +8,24 @@ defined( 'ABSPATH' ) || exit;
 class EQB_Checkout {
 
 	public static function init() {
+		$prio = 99999;
+
+		if ( EQB_Settings::is_address_optional() ) {
+			add_filter( 'woocommerce_checkout_fields', array( __CLASS__, 'make_address_optional' ), $prio );
+			add_filter( 'woocommerce_billing_fields', array( __CLASS__, 'make_billing_address_optional' ), $prio );
+			add_filter( 'woocommerce_shipping_fields', array( __CLASS__, 'make_shipping_address_optional' ), $prio );
+			add_filter( 'woocommerce_get_country_locale', array( __CLASS__, 'country_locale_address_optional' ), $prio );
+			add_filter( 'woocommerce_default_address_fields', array( __CLASS__, 'default_address_fields_optional' ), $prio );
+		}
+
+		if ( EQB_Settings::is_email_optional() ) {
+			add_filter( 'woocommerce_checkout_fields', array( __CLASS__, 'make_email_optional' ), $prio );
+			add_filter( 'woocommerce_billing_fields', array( __CLASS__, 'make_billing_email_optional' ), $prio );
+		}
+
 		if ( ! self::is_active() ) {
 			return;
 		}
-
-		$prio = 99999;
 
 		add_filter( 'woocommerce_checkout_fields', array( __CLASS__, 'customize_fields' ), $prio );
 		add_filter( 'woocommerce_billing_fields', array( __CLASS__, 'customize_legacy_billing' ), $prio );
@@ -192,6 +205,7 @@ class EQB_Checkout {
 			$fields[ $prefix . '_email' ]['label']    = __( 'Địa chỉ email', 'echbay-quick-buy' );
 			$fields[ $prefix . '_email' ]['class']    = array( 'form-row-last', 'eqb-checkout-email' );
 			$fields[ $prefix . '_email' ]['priority'] = 21;
+			$fields[ $prefix . '_email' ] = self::apply_email_optional_field( $fields[ $prefix . '_email' ] );
 		}
 
 		if ( isset( $fields[ $state ] ) ) {
@@ -229,6 +243,7 @@ class EQB_Checkout {
 			$fields[ $prefix . '_address_1' ]['class']    = array( 'form-row-wide' );
 			$fields[ $prefix . '_address_1' ]['priority'] = 40;
 			$fields[ $prefix . '_address_1' ]['placeholder'] = __( 'Số nhà, tên đường', 'echbay-quick-buy' );
+			$fields[ $prefix . '_address_1' ] = self::apply_address_optional_field( $fields[ $prefix . '_address_1' ] );
 		}
 
 		if ( isset( $fields[ $prefix . '_country' ] ) ) {
@@ -286,6 +301,7 @@ class EQB_Checkout {
 				'address_1' => array(
 					'label'    => __( 'Địa chỉ', 'echbay-quick-buy' ),
 					'priority' => 40,
+					'required' => ! EQB_Settings::is_address_optional(),
 				),
 			)
 		);
@@ -322,6 +338,139 @@ class EQB_Checkout {
 				$errors->add( 'eqb_' . $prefix . '_ward', __( 'Phường/Xã không hợp lệ.', 'echbay-quick-buy' ) );
 			}
 		}
+	}
+
+	/**
+	 * @param array<string, array<string, mixed>> $fields Checkout fields.
+	 */
+	public static function make_address_optional( $fields ) {
+		foreach ( array( 'billing', 'shipping' ) as $group ) {
+			if ( ! isset( $fields[ $group ] ) ) {
+				continue;
+			}
+			$key = $group . '_address_1';
+			if ( isset( $fields[ $group ][ $key ] ) ) {
+				$fields[ $group ][ $key ] = self::apply_address_optional_field( $fields[ $group ][ $key ] );
+			}
+		}
+
+		return $fields;
+	}
+
+	/**
+	 * @param array<string, array<string, mixed>> $fields Billing fields.
+	 */
+	public static function make_billing_address_optional( $fields ) {
+		if ( isset( $fields['billing_address_1'] ) ) {
+			$fields['billing_address_1'] = self::apply_address_optional_field( $fields['billing_address_1'] );
+		}
+
+		return $fields;
+	}
+
+	/**
+	 * @param array<string, array<string, mixed>> $fields Shipping fields.
+	 */
+	public static function make_shipping_address_optional( $fields ) {
+		if ( isset( $fields['shipping_address_1'] ) ) {
+			$fields['shipping_address_1'] = self::apply_address_optional_field( $fields['shipping_address_1'] );
+		}
+
+		return $fields;
+	}
+
+	/**
+	 * @param array<string, array<string, mixed>> $fields Default address fields.
+	 */
+	public static function default_address_fields_optional( $fields ) {
+		if ( isset( $fields['address_1'] ) ) {
+			$fields['address_1'] = self::apply_address_optional_field( $fields['address_1'] );
+		}
+
+		return $fields;
+	}
+
+	/**
+	 * @param array<string, array<string, mixed>> $locale Country locale.
+	 */
+	public static function country_locale_address_optional( $locale ) {
+		if ( ! isset( $locale['VN'] ) || ! is_array( $locale['VN'] ) ) {
+			$locale['VN'] = array();
+		}
+
+		$locale['VN']['address_1'] = array_merge(
+			isset( $locale['VN']['address_1'] ) && is_array( $locale['VN']['address_1'] ) ? $locale['VN']['address_1'] : array(),
+			array(
+				'required' => false,
+			)
+		);
+
+		return $locale;
+	}
+
+	/**
+	 * @param array<string, array<string, mixed>> $fields Checkout fields.
+	 */
+	public static function make_email_optional( $fields ) {
+		if ( isset( $fields['billing']['billing_email'] ) ) {
+			$fields['billing']['billing_email'] = self::apply_email_optional_field( $fields['billing']['billing_email'] );
+		}
+
+		return $fields;
+	}
+
+	/**
+	 * @param array<string, array<string, mixed>> $fields Billing fields.
+	 */
+	public static function make_billing_email_optional( $fields ) {
+		if ( isset( $fields['billing_email'] ) ) {
+			$fields['billing_email'] = self::apply_email_optional_field( $fields['billing_email'] );
+		}
+
+		return $fields;
+	}
+
+	/**
+	 * @param array<string, mixed> $field Field definition.
+	 * @return array<string, mixed>
+	 */
+	private static function apply_email_optional_field( $field ) {
+		if ( EQB_Settings::is_email_optional() ) {
+			return self::make_field_not_required( $field );
+		}
+
+		$field['required'] = true;
+		if ( isset( $field['class'] ) && is_array( $field['class'] ) && ! in_array( 'validate-required', $field['class'], true ) ) {
+			$field['class'][] = 'validate-required';
+		}
+
+		return $field;
+	}
+
+	/**
+	 * @param array<string, mixed> $field Field definition.
+	 * @return array<string, mixed>
+	 */
+	private static function apply_address_optional_field( $field ) {
+		if ( ! EQB_Settings::is_address_optional() ) {
+			return $field;
+		}
+
+		return self::make_field_not_required( $field );
+	}
+
+	/**
+	 * @param array<string, mixed> $field Field definition.
+	 * @return array<string, mixed>
+	 */
+	private static function make_field_not_required( $field ) {
+		$field['required'] = false;
+
+		if ( isset( $field['class'] ) && is_array( $field['class'] ) ) {
+			$field['class'] = array_values( array_diff( $field['class'], array( 'validate-required' ) ) );
+		}
+
+		return $field;
 	}
 
 	public static function enqueue_assets() {
