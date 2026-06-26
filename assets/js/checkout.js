@@ -15,6 +15,7 @@
 
 	var wardLoadSeq = {};
 	var initTimer = null;
+	var provinceRetryTimers = {};
 
 	function getStoredValue(key) {
 		try {
@@ -41,6 +42,70 @@
 		if ($country.length && $country.val() !== 'VN') {
 			$country.val('VN');
 		}
+	}
+
+	function refreshSelect($select) {
+		if (!$select.length) {
+			return;
+		}
+
+		if ($select.hasClass('select2-hidden-accessible')) {
+			$select.trigger('change.select2');
+		}
+	}
+
+	function stateHasProvinceOption($state, provinceCode) {
+		return !!(provinceCode && $state.length && $state.find('option[value="' + provinceCode + '"]').length);
+	}
+
+	function selectProvince($state, provinceCode) {
+		if (!stateHasProvinceOption($state, provinceCode)) {
+			return false;
+		}
+
+		if ($state.val() !== provinceCode) {
+			$state.val(provinceCode);
+		}
+
+		refreshSelect($state);
+		return true;
+	}
+
+	function clearProvinceRetry(prefix) {
+		if (provinceRetryTimers[prefix]) {
+			clearTimeout(provinceRetryTimers[prefix]);
+			delete provinceRetryTimers[prefix];
+		}
+	}
+
+	function scheduleProvinceRestore(prefix, attempt) {
+		attempt = attempt || 0;
+
+		if (attempt > 25) {
+			return;
+		}
+
+		var savedProvince = getStoredValue(STORAGE_KEY_PROVINCE);
+		if (!savedProvince) {
+			return;
+		}
+
+		var $state = $('#' + prefix + '_state');
+		var $city = $('#' + prefix + '_city');
+
+		if (!$state.length || !$city.length || !document.body.contains($state[0])) {
+			return;
+		}
+
+		if (selectProvince($state, savedProvince)) {
+			clearProvinceRetry(prefix);
+			restoreWardSelection(prefix, savedProvince);
+			return;
+		}
+
+		provinceRetryTimers[prefix] = setTimeout(function () {
+			scheduleProvinceRestore(prefix, attempt + 1);
+		}, 200);
 	}
 
 	function fixStatePlaceholder($state) {
@@ -71,8 +136,8 @@
 		});
 	}
 
-	function loadWards($state, $city, selectedWard) {
-		var maTinh = $state.val();
+	function loadWards($state, $city, selectedWard, maTinhOverride) {
+		var maTinh = maTinhOverride || $state.val();
 		var stateId = $state.attr('id') || '';
 
 		if (!maTinh) {
@@ -114,6 +179,8 @@
 				if (selectedWard && $city.find('option[value="' + selectedWard + '"]').length) {
 					$city.val(selectedWard);
 				}
+
+				refreshSelect($city);
 			})
 			.fail(function () {
 				if (seq !== wardLoadSeq[stateId]) {
@@ -141,6 +208,29 @@
 		return false;
 	}
 
+	function restoreWardSelection(prefix, maTinh) {
+		var $state = $('#' + prefix + '_state');
+		var $city = $('#' + prefix + '_city');
+
+		if (!$state.length || !$city.length || !maTinh) {
+			return;
+		}
+
+		var savedWard = getStoredValue(STORAGE_KEY_WARD);
+		var currentWard = $city.val();
+		var currentWardValid = currentWard && $city.find('option[value="' + currentWard + '"]').length;
+		var wardToSelect = currentWardValid ? currentWard : savedWard;
+
+		if (wardToSelect && selectWardIfPresent($city, wardToSelect)) {
+			refreshSelect($city);
+			return;
+		}
+
+		if (wardToSelect || $city.find('option').length <= 1) {
+			loadWards($state, $city, wardToSelect, maTinh);
+		}
+	}
+
 	function restoreSavedAddress(prefix) {
 		var $state = $('#' + prefix + '_state');
 		var $city = $('#' + prefix + '_city');
@@ -150,28 +240,23 @@
 		}
 
 		var savedProvince = getStoredValue(STORAGE_KEY_PROVINCE);
-		var savedWard = getStoredValue(STORAGE_KEY_WARD);
+		var provinceSelected = false;
 
-		if (!$state.val() && savedProvince && $state.find('option[value="' + savedProvince + '"]').length) {
-			$state.val(savedProvince);
+		if (savedProvince) {
+			provinceSelected = selectProvince($state, savedProvince);
+			if (!provinceSelected) {
+				scheduleProvinceRestore(prefix, 0);
+			} else {
+				clearProvinceRetry(prefix);
+			}
 		}
 
-		var maTinh = $state.val();
+		var maTinh = $state.val() || savedProvince;
 		if (!maTinh) {
 			return;
 		}
 
-		var currentWard = $city.val();
-		var currentWardValid = currentWard && $city.find('option[value="' + currentWard + '"]').length;
-		var wardToSelect = currentWardValid ? currentWard : savedWard;
-
-		if (wardToSelect && selectWardIfPresent($city, wardToSelect)) {
-			return;
-		}
-
-		if (wardToSelect || $city.find('option').length <= 1) {
-			loadWards($state, $city, wardToSelect);
-		}
+		restoreWardSelection(prefix, maTinh);
 	}
 
 	function bindPair(prefix) {
@@ -219,7 +304,7 @@
 
 	$(function () {
 		scheduleInitCheckoutAddress();
-		$(document.body).on('init_checkout updated_checkout', scheduleInitCheckoutAddress);
+		$(document.body).on('init_checkout updated_checkout country_to_state_changed', scheduleInitCheckoutAddress);
 		$(document.body).on('checkout_place_order', saveAddressToStorage);
 	});
 })(jQuery);
