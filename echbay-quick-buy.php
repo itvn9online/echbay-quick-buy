@@ -3,7 +3,7 @@
  * Plugin Name:       Echbay Quick Buy
  * Plugin URI:        https://echbay.com/
  * Description:       Nút Mua ngay trên trang sản phẩm WooCommerce — popup đặt hàng nhanh qua AJAX.
- * Version:           1.1.17
+ * Version:           1.1.18
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Dao Quoc Dai
@@ -20,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
 // Khi phát hành: nâng EQB_VERSION, Version ở header (dòng ~6), version.txt (so sánh update GitHub)
 // và readme.txt (Stable tag + mục Changelog tương ứng).
 // define( 'EQB_VERSION', time() ); // bật tạm khi dev để luôn bypass cache.
-define( 'EQB_VERSION', '1.1.17' );
+define( 'EQB_VERSION', '1.1.18' );
 define( 'EQB_PATH', plugin_dir_path( __FILE__ ) );
 define( 'EQB_URL', plugin_dir_url( __FILE__ ) );
 define( 'EQB_BASENAME', plugin_basename( __FILE__ ) );
@@ -44,6 +44,7 @@ require_once EQB_PATH . 'includes/class-eqb-install.php';
 require_once EQB_PATH . 'includes/class-eqb-address.php';
 require_once EQB_PATH . 'includes/class-eqb-order.php';
 require_once EQB_PATH . 'includes/class-eqb-honeypot.php';
+require_once EQB_PATH . 'includes/class-eqb-captcha.php';
 require_once EQB_PATH . 'includes/class-eqb-ajax.php';
 require_once EQB_PATH . 'includes/class-eqb-frontend.php';
 require_once EQB_PATH . 'includes/class-eqb-checkout.php';

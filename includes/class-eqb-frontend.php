@@ -62,10 +62,24 @@ class EQB_Frontend {
 			$deps[] = 'wc-add-to-cart-variation';
 		}
 
+		EQB_Captcha::enqueue_scripts();
+
+		$captcha_deps = array();
+		if ( EQB_Captcha::is_enabled() ) {
+			$provider = EQB_Captcha::get_provider();
+			if ( EQB_Captcha::PROVIDER_RECAPTCHA === $provider ) {
+				$captcha_deps[] = 'google-recaptcha';
+			} elseif ( EQB_Captcha::PROVIDER_RECAPTCHA_V3 === $provider ) {
+				$captcha_deps[] = 'google-recaptcha-v3';
+			} elseif ( EQB_Captcha::PROVIDER_TURNSTILE === $provider ) {
+				$captcha_deps[] = 'cloudflare-turnstile';
+			}
+		}
+
 		wp_enqueue_script(
 			'eqb-quick-buy',
 			EQB_URL . 'assets/js/quick-buy.js',
-			$deps,
+			array_merge( $deps, $captcha_deps ),
 			EQB_VERSION,
 			true
 		);
@@ -79,6 +93,7 @@ class EQB_Frontend {
 				'debug_note'       => '1' === EQB_Settings::get( 'debug_order_note', '0' ) ? '1' : '0',
 				'address_optional' => EQB_Settings::is_address_optional() ? '1' : '0',
 				'email_optional'   => EQB_Settings::is_email_optional() ? '1' : '0',
+				'captcha'          => EQB_Captcha::get_frontend_config(),
 				'i18n'       => array(
 					'loading'       => __( 'Đang tải...', 'echbay-quick-buy' ),
 					'loadingWards'  => __( 'Đang tải phường/xã...', 'echbay-quick-buy' ),
@@ -88,6 +103,8 @@ class EQB_Frontend {
 					'selectWard'    => __( 'Phường/Xã *', 'echbay-quick-buy' ),
 					'selectVariant' => __( 'Vui lòng chọn phân loại sản phẩm.', 'echbay-quick-buy' ),
 					'consentRequired' => __( 'Vui lòng đồng ý với Điều khoản & Điều kiện trước khi đặt hàng.', 'echbay-quick-buy' ),
+					'captchaRequired' => __( 'Vui lòng hoàn thành xác minh CAPTCHA trước khi đặt hàng.', 'echbay-quick-buy' ),
+					'recaptchaV3Notice' => __( 'Trang web được bảo vệ bởi reCAPTCHA. Áp dụng Chính sách bảo mật và Điều khoản dịch vụ của Google.', 'echbay-quick-buy' ),
 				),
 			)
 		);

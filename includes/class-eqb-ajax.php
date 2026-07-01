@@ -73,6 +73,11 @@ class EQB_Ajax {
 	}
 
 	private static function create_order() {
+		$captcha = EQB_Captcha::validate( $_POST );
+		if ( is_wp_error( $captcha ) ) {
+			wp_send_json_error( array( 'message' => $captcha->get_error_message() ), 400 );
+		}
+
 		$honeypot = EQB_Honeypot::validate( $_POST );
 		if ( is_wp_error( $honeypot ) ) {
 			wp_send_json_error( array( 'message' => $honeypot->get_error_message() ), 400 );

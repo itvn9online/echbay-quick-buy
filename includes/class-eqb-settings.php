@@ -42,8 +42,17 @@ class EQB_Settings {
 			'redirect_thankyou' => '1',
 			'checkout_vn_form'  => '1',
 			'address_optional'  => '1',
+			'cancel_no_address' => '1',
 			'email_optional'    => '1',
 			'debug_order_note'  => '0',
+			'captcha_provider'  => 'off',
+			'recaptcha_site_key'   => '',
+			'recaptcha_secret_key' => '',
+			'recaptcha_v3_site_key'   => '',
+			'recaptcha_v3_secret_key' => '',
+			'recaptcha_v3_score'      => '0.5',
+			'turnstile_site_key'   => '',
+			'turnstile_secret_key' => '',
 		);
 	}
 
@@ -66,6 +75,10 @@ class EQB_Settings {
 
 	public static function is_address_optional() {
 		return '1' === (string) self::get( 'address_optional', '1' );
+	}
+
+	public static function is_cancel_no_address_enabled() {
+		return '1' === (string) self::get( 'cancel_no_address', '1' );
 	}
 
 	public static function is_email_optional() {
@@ -100,7 +113,7 @@ class EQB_Settings {
 
 		$out     = self::get_all();
 		$texts   = array( 'button_title', 'button_subtitle', 'popup_prefix', 'phone_notice', 'success_message', 'error_message' );
-		$checks  = array( 'enable', 'redirect_thankyou', 'checkout_vn_form', 'address_optional', 'email_optional', 'debug_order_note' );
+		$checks  = array( 'enable', 'redirect_thankyou', 'checkout_vn_form', 'address_optional', 'cancel_no_address', 'email_optional', 'debug_order_note' );
 
 		foreach ( $checks as $key ) {
 			$out[ $key ] = ! empty( $input[ $key ] ) ? '1' : '0';
@@ -120,6 +133,37 @@ class EQB_Settings {
 		}
 		if ( isset( $input['error_message'] ) ) {
 			$out['error_message'] = sanitize_textarea_field( wp_unslash( $input['error_message'] ) );
+		}
+
+		$provider = isset( $input['captcha_provider'] ) ? sanitize_text_field( wp_unslash( $input['captcha_provider'] ) ) : EQB_Captcha::PROVIDER_OFF;
+		if ( ! in_array( $provider, EQB_Captcha::get_providers(), true ) ) {
+			$provider = EQB_Captcha::PROVIDER_OFF;
+		}
+		$out['captcha_provider'] = $provider;
+
+		$captcha_keys = array(
+			'recaptcha_site_key',
+			'recaptcha_secret_key',
+			'recaptcha_v3_site_key',
+			'recaptcha_v3_secret_key',
+			'turnstile_site_key',
+			'turnstile_secret_key',
+		);
+		foreach ( $captcha_keys as $key ) {
+			if ( isset( $input[ $key ] ) ) {
+				$out[ $key ] = sanitize_text_field( wp_unslash( $input[ $key ] ) );
+			}
+		}
+
+		if ( isset( $input['recaptcha_v3_score'] ) ) {
+			$score = (float) wp_unslash( $input['recaptcha_v3_score'] );
+			if ( $score < 0.0 ) {
+				$score = 0.0;
+			}
+			if ( $score > 1.0 ) {
+				$score = 1.0;
+			}
+			$out['recaptcha_v3_score'] = (string) $score;
 		}
 
 		return $out;

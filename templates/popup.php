@@ -20,6 +20,7 @@ if ($terms_page_id && 'publish' === get_post_status($terms_page_id)) {
 }
 $address_optional = EQB_Settings::is_address_optional();
 $email_optional   = EQB_Settings::is_email_optional();
+$captcha_enabled  = EQB_Captcha::is_enabled();
 ?>
 <div class="eqb-popup"
 	data-product-id="<?php echo esc_attr((string) $product->get_id()); ?>"
@@ -166,11 +167,18 @@ $email_optional   = EQB_Settings::is_email_optional();
 
 				<div class="eqb-form__message eqb-hidden" data-eqb-message></div>
 
+				<?php if ( $captcha_enabled ) : ?>
+					<div class="eqb-field eqb-field--captcha">
+						<div data-eqb-captcha></div>
+					</div>
+				<?php endif; ?>
+
 				<label class="eqb-form__consent">
 					<input type="checkbox"
 						name="<?php echo esc_attr(EQB_Honeypot::get_field_name(EQB_Honeypot::PREFIX_CONSENT)); ?>"
 						value="<?php echo esc_attr(EQB_Honeypot::CONSENT_VALUE); ?>"
-						data-eqb-consent>
+						data-eqb-consent
+						<?php checked( $captcha_enabled ); ?>>
 					<span>
 						<?php
 						if ($terms_url) {

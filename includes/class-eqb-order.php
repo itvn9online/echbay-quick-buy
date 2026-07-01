@@ -124,7 +124,7 @@ class EQB_Order {
 				return $order;
 			}
 
-			$cancel_as_spam = self::is_missing_street_address( $address_street );
+			$cancel_as_spam = EQB_Settings::is_cancel_no_address_enabled() && self::is_missing_street_address( $address_street );
 
 			$order->add_product( $product, $qty );
 

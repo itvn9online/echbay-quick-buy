@@ -1,6 +1,50 @@
 <?php
 defined( 'ABSPATH' ) || exit;
+
+/**
+ * @param string $id       Input id.
+ * @param string $name     Input name.
+ * @param string $value    Input value.
+ */
+if ( ! function_exists( 'eqb_admin_password_field' ) ) {
+	function eqb_admin_password_field( $id, $name, $value ) {
+	?>
+	<span class="eqb-password-field">
+		<input type="password"
+			class="regular-text eqb-password-input"
+			id="<?php echo esc_attr( $id ); ?>"
+			name="<?php echo esc_attr( $name ); ?>"
+			value="<?php echo esc_attr( $value ); ?>"
+			autocomplete="new-password">
+		<button type="button"
+			class="button eqb-password-toggle"
+			aria-pressed="false"
+			aria-label="<?php esc_attr_e( 'Hiện mật khẩu', 'echbay-quick-buy' ); ?>"
+			data-show-label="<?php esc_attr_e( 'Hiện', 'echbay-quick-buy' ); ?>"
+			data-hide-label="<?php esc_attr_e( 'Ẩn', 'echbay-quick-buy' ); ?>">
+			<?php esc_html_e( 'Hiện', 'echbay-quick-buy' ); ?>
+		</button>
+	</span>
+	<?php
+	}
+}
 ?>
+<style>
+	.eqb-password-field {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		max-width: 32em;
+		width: 100%;
+	}
+	.eqb-password-field .eqb-password-input {
+		flex: 1;
+		min-width: 0;
+	}
+	.eqb-password-toggle {
+		flex-shrink: 0;
+	}
+</style>
 <div class="wrap">
 	<h1><?php esc_html_e( 'Echbay Quick Buy', 'echbay-quick-buy' ); ?></h1>
 
@@ -74,6 +118,13 @@ defined( 'ABSPATH' ) || exit;
 						<?php esc_html_e( 'Không bắt buộc nhập (billing_address_1)', 'echbay-quick-buy' ); ?>
 					</label>
 					<p class="description"><?php esc_html_e( 'Áp dụng cho trang Thanh toán WooCommerce và popup Mua ngay.', 'echbay-quick-buy' ); ?></p>
+					<p>
+						<label>
+							<input type="checkbox" name="<?php echo esc_attr( $key ); ?>[cancel_no_address]" value="1" <?php checked( '1', $options['cancel_no_address'] ); ?>>
+							<?php esc_html_e( 'Tự động hủy đơn không có địa chỉ nhà (nghi spam)', 'echbay-quick-buy' ); ?>
+						</label>
+					</p>
+					<p class="description"><?php esc_html_e( 'Khi bật: đơn thiếu số nhà/tên đường sẽ chuyển trạng thái Hủy thay vì xử lý bình thường. Tắt nếu shop cho phép đặt hàng chỉ với Tỉnh/Phường.', 'echbay-quick-buy' ); ?></p>
 				</td>
 			</tr>
 			<tr>
@@ -97,6 +148,162 @@ defined( 'ABSPATH' ) || exit;
 				</td>
 			</tr>
 		</table>
+
+		<h2><?php esc_html_e( 'CAPTCHA chống spam', 'echbay-quick-buy' ); ?></h2>
+		<p class="description"><?php esc_html_e( 'Bật xác minh bên thứ ba trên form Mua ngay. Mặc định tắt — chỉ bật khi shop bị spam.', 'echbay-quick-buy' ); ?></p>
+
+		<table class="form-table" role="presentation">
+			<tr>
+				<th scope="row"><label for="eqb-captcha-provider"><?php esc_html_e( 'Nhà cung cấp CAPTCHA', 'echbay-quick-buy' ); ?></label></th>
+				<td>
+					<select id="eqb-captcha-provider" name="<?php echo esc_attr( $key ); ?>[captcha_provider]">
+						<option value="off" <?php selected( 'off', $options['captcha_provider'] ); ?>><?php esc_html_e( 'Tắt', 'echbay-quick-buy' ); ?></option>
+						<option value="google_recaptcha" <?php selected( 'google_recaptcha', $options['captcha_provider'] ); ?>><?php esc_html_e( 'Google reCAPTCHA v2 (Checkbox)', 'echbay-quick-buy' ); ?></option>
+						<option value="google_recaptcha_v3" <?php selected( 'google_recaptcha_v3', $options['captcha_provider'] ); ?>><?php esc_html_e( 'Google reCAPTCHA v3 (Vô hình)', 'echbay-quick-buy' ); ?></option>
+						<option value="cloudflare_turnstile" <?php selected( 'cloudflare_turnstile', $options['captcha_provider'] ); ?>><?php esc_html_e( 'Cloudflare Turnstile', 'echbay-quick-buy' ); ?></option>
+					</select>
+				</td>
+			</tr>
+			<tbody class="eqb-captcha-group" data-provider="google_recaptcha">
+				<tr>
+					<th scope="row"><label for="eqb-recaptcha-site-key"><?php esc_html_e( 'Site Key', 'echbay-quick-buy' ); ?></label></th>
+					<td>
+						<input type="text" class="regular-text" id="eqb-recaptcha-site-key" name="<?php echo esc_attr( $key ); ?>[recaptcha_site_key]" value="<?php echo esc_attr( $options['recaptcha_site_key'] ); ?>" autocomplete="off">
+						<p class="description">
+							<?php
+							printf(
+								/* translators: %s: Google reCAPTCHA admin URL */
+								wp_kses_post( __( 'Lấy tại <a href="%s" target="_blank" rel="noopener noreferrer">Google reCAPTCHA Admin</a>. Chọn loại <strong>reCAPTCHA v2</strong> → <strong>“Tôi không phải người máy” Checkbox</strong>. Thêm domain website (ví dụ: example.com).', 'echbay-quick-buy' ) ),
+								esc_url( 'https://www.google.com/recaptcha/admin' )
+							);
+							?>
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="eqb-recaptcha-secret-key"><?php esc_html_e( 'Secret Key', 'echbay-quick-buy' ); ?></label></th>
+					<td>
+						<?php
+						eqb_admin_password_field(
+							'eqb-recaptcha-secret-key',
+							$key . '[recaptcha_secret_key]',
+							$options['recaptcha_secret_key']
+						);
+						?>
+						<p class="description"><?php esc_html_e( 'Secret Key hiển thị cùng Site Key sau khi tạo site trên Google reCAPTCHA.', 'echbay-quick-buy' ); ?></p>
+					</td>
+				</tr>
+			</tbody>
+			<tbody class="eqb-captcha-group" data-provider="google_recaptcha_v3">
+				<tr>
+					<th scope="row"><label for="eqb-recaptcha-v3-site-key"><?php esc_html_e( 'Site Key', 'echbay-quick-buy' ); ?></label></th>
+					<td>
+						<input type="text" class="regular-text" id="eqb-recaptcha-v3-site-key" name="<?php echo esc_attr( $key ); ?>[recaptcha_v3_site_key]" value="<?php echo esc_attr( $options['recaptcha_v3_site_key'] ); ?>" autocomplete="off">
+						<p class="description">
+							<?php
+							printf(
+								/* translators: %s: Google reCAPTCHA admin URL */
+								wp_kses_post( __( 'Lấy tại <a href="%s" target="_blank" rel="noopener noreferrer">Google reCAPTCHA Admin</a>. Chọn loại <strong>reCAPTCHA v3</strong> (Score based). Key v3 khác key v2 — cần tạo site riêng.', 'echbay-quick-buy' ) ),
+								esc_url( 'https://www.google.com/recaptcha/admin' )
+							);
+							?>
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="eqb-recaptcha-v3-secret-key"><?php esc_html_e( 'Secret Key', 'echbay-quick-buy' ); ?></label></th>
+					<td>
+						<?php
+						eqb_admin_password_field(
+							'eqb-recaptcha-v3-secret-key',
+							$key . '[recaptcha_v3_secret_key]',
+							$options['recaptcha_v3_secret_key']
+						);
+						?>
+						<p class="description"><?php esc_html_e( 'Secret Key của site reCAPTCHA v3.', 'echbay-quick-buy' ); ?></p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="eqb-recaptcha-v3-score"><?php esc_html_e( 'Ngưỡng điểm (score)', 'echbay-quick-buy' ); ?></label></th>
+					<td>
+						<input type="number" class="small-text" id="eqb-recaptcha-v3-score" name="<?php echo esc_attr( $key ); ?>[recaptcha_v3_score]" value="<?php echo esc_attr( $options['recaptcha_v3_score'] ); ?>" min="0" max="1" step="0.1">
+						<p class="description"><?php esc_html_e( 'Google trả về điểm 0.0–1.0 (1.0 = người thật). Mặc định 0.5. Tăng lên (ví dụ 0.7) nếu vẫn bị spam; giảm nếu khách hợp lệ bị chặn.', 'echbay-quick-buy' ); ?></p>
+					</td>
+				</tr>
+			</tbody>
+			<tbody class="eqb-captcha-group" data-provider="cloudflare_turnstile">
+				<tr>
+					<th scope="row"><label for="eqb-turnstile-site-key"><?php esc_html_e( 'Site Key', 'echbay-quick-buy' ); ?></label></th>
+					<td>
+						<input type="text" class="regular-text" id="eqb-turnstile-site-key" name="<?php echo esc_attr( $key ); ?>[turnstile_site_key]" value="<?php echo esc_attr( $options['turnstile_site_key'] ); ?>" autocomplete="off">
+						<p class="description">
+							<?php
+							printf(
+								/* translators: %s: Cloudflare Turnstile dashboard URL */
+								wp_kses_post( __( 'Lấy tại <a href="%s" target="_blank" rel="noopener noreferrer">Cloudflare Turnstile</a>. Tạo widget mới, chọn chế độ Managed (khuyến nghị). Thêm hostname website.', 'echbay-quick-buy' ) ),
+								esc_url( 'https://dash.cloudflare.com/?to=/:account/turnstile' )
+							);
+							?>
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="eqb-turnstile-secret-key"><?php esc_html_e( 'Secret Key', 'echbay-quick-buy' ); ?></label></th>
+					<td>
+						<?php
+						eqb_admin_password_field(
+							'eqb-turnstile-secret-key',
+							$key . '[turnstile_secret_key]',
+							$options['turnstile_secret_key']
+						);
+						?>
+						<p class="description"><?php esc_html_e( 'Secret Key hiển thị trong chi tiết widget Turnstile trên Cloudflare.', 'echbay-quick-buy' ); ?></p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<script>
+		(function () {
+			var select = document.getElementById('eqb-captcha-provider');
+			var groups = document.querySelectorAll('.eqb-captcha-group');
+
+			function toggleCaptchaGroups() {
+				var provider = select ? select.value : 'off';
+				groups.forEach(function (group) {
+					group.style.display = group.getAttribute('data-provider') === provider ? '' : 'none';
+				});
+			}
+
+			if (select) {
+				select.addEventListener('change', toggleCaptchaGroups);
+				toggleCaptchaGroups();
+			}
+
+			document.querySelectorAll('.eqb-password-toggle').forEach(function (button) {
+				button.addEventListener('click', function () {
+					var wrap = button.closest('.eqb-password-field');
+					if (!wrap) {
+						return;
+					}
+
+					var input = wrap.querySelector('.eqb-password-input');
+					if (!input) {
+						return;
+					}
+
+					var isHidden = input.type === 'password';
+					input.type = isHidden ? 'text' : 'password';
+					button.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
+					button.setAttribute(
+						'aria-label',
+						isHidden ? button.getAttribute('data-hide-label') : button.getAttribute('data-show-label')
+					);
+					button.textContent = isHidden ? button.getAttribute('data-hide-label') : button.getAttribute('data-show-label');
+				});
+			});
+		})();
+		</script>
 
 		<?php submit_button(); ?>
 	</form>
